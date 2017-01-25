@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 import openerp
+import qrcode
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -41,17 +42,36 @@ _logger = logging.getLogger(__name__)
 class ZipLabel(orm.Model):
     """ Model name: ZipLabel
     """
-    
+        
     _name = 'zip.label'
     _description = 'Zip Label'
     _rec_name = 'code'
     _order = 'code'
+    
+    def generate_qr_code(self, cr, uid, ids, context=None):
+        ''' Generate QR Code for label
+        '''
+        for label in self.browse(cr, uid, ids, context=context):
+            path = '/home/openerp/'
+            
+            item_id = label.id
+            fullname = os.path.join(path, '%s.png' % item_id)
+            
+            code = label.code
+            text_it = label.description_it
+            text_en = label.description_en
+            qr_mask = 'Zipperr\nCodice: %s\IT: %s\nEN: %s'
+            qr_text = qr_mask % (code, text_it, text_en)    
+            img = qrcode.make(qr_text)
+            img.save(fullname)
+        return True
     
     _columns = {
         'code': fields.char(
             'Code', size=64, required=True),
         'description_it': fields.text('Description IT', required=True)
         'description_en': fields.text('Description EN', required=True)
+        # qrcode function binary
         }
         
     _defaults = {
