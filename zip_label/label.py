@@ -208,8 +208,12 @@ class SaleOrder(orm.Model):
         ''' Udpate order from label qrcode text
         '''
         current_proxy = self.browse(cr, uid, ids, context=context)[0]
-        return self.onchange_qrcode_box(
+        self.onchange_qrcode_box(
             cr, uid, ids, current_proxy.label_box, context=context)
+        self.write(cr, uid, ids, {
+            'label_box': False,
+            }, context=context)
+        return True
         
         
     def onchange_qrcode_box(self, cr, uid, ids, label_box, context=None):
