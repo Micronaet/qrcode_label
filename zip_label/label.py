@@ -204,14 +204,22 @@ class SaleOrder(orm.Model):
     
     _inherit = 'sale.order'
     
+    def update_order_label_line(self, cr, uid, ids, context=None):
+        ''' Udpate order from label qrcode text
+        '''
+        current_proxy = self.browse(cr, uid, ids, context=context)[0]
+        return self.onchange_qrcode_box(
+            cr, uid, ids, current_proxy.label_box, context=context)
+        
+        
     def onchange_qrcode_box(self, cr, uid, ids, label_box, context=None):
         ''' QRcode box
         '''
-        res = {'value': {}}# {'label_box': False}}
+        res = {'value': {'label_box': False}} # reset value after insert
         if not label_box:
             return res
         parts = label_box.split('[')[1:]
-            
+
         codes = [] 
         for item in parts:
             codes.append(item.split(']')[0])
@@ -228,14 +236,14 @@ class SaleOrder(orm.Model):
             if label_ids:
                 label_id = label_ids[0]
             else:
-                label_id = False        
+                label_id = False
+            
             line_pool.create(cr, uid, {
                 'order_id': ids[0],
                 'name': code,
                 'label_id': label_id,
                 'product_uom_qty': 1.0,                
-                }, context=context)           
-        
+                }, context=context)
         return res
         
     _columns = {

@@ -45,6 +45,7 @@
 				                </field>
 				                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." />
 				                <field name="label_box" class="oe_inline" placeholder="QR code input..." on_change="onchange_qrcode_box(label_box)"/>
+				                <button name="update_order_label_line" string="Update" type="object" />
 			                </page>
 		                </notebook>
 	                </sheet>
