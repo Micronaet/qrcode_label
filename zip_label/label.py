@@ -61,6 +61,12 @@ class ZipLabel(orm.Model):
         res = ''
         for folder in self_qrcode_path:
             res = os.path.join(res, folder)
+        res = os.path.expanduser(res)
+            
+        try:    
+            os.system('mkdir -p %s' % res)
+        except:
+            _logger.error('Error generating path: %s' % res) 
         return res
 
     # -------------------------------------------------------------------------        
@@ -99,6 +105,7 @@ class ZipLabel(orm.Model):
         # Generate QR Code    
         self.generate_qr_code(cr, uid, [ids], context=context)
         return res
+    
     
             
     # -------------------------------------------------------------------------        
