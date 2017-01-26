@@ -208,20 +208,33 @@ class SaleOrder(orm.Model):
         ''' QRcode box
         '''
         res = {'value': {}}# {'label_box': False}}
-        
-        if label_box:
-            part = label_box.split('[').split(']')
-        i = 0   
-        code = [] 
-        for item in part:
-            i += 1
-            if i mod 2 == 0:
-                code.append(item)
+        if not label_box:
+            return res
+        parts = label_box.split('[')[1:]
+            
+        codes = [] 
+        for item in parts:
+            codes.append(item.split(']')[0])
                 
                         
         #res['value']['label_id'] = 3 # TODO 
         #res['value']['name'] = 'Etichetta 1' # TODO 
-        res['value']['label_box'] = '%s' % (code, )
+        res['value']['label_box'] = '%s' % (codes, )
+        line_pool = self.pool.get('sale.order.line')
+        label_pool = self.pool.get('zip.label')
+        for code in codes:
+            label_ids = label_pool.search(cr, uid, [
+                ('code', '=', code)], context=context)
+            if label_ids:
+                label_id = label_ids[0]
+            else:
+                label_id = False        
+            line_pool.create(cr, uid, {
+                'order_id': ids[0],
+                'name': code,
+                'label_id': label_id,
+                'product_uom_qty': 1.0,                
+                }, context=context)           
         
         return res
         
