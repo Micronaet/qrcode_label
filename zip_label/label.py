@@ -47,74 +47,78 @@ class ZipLabel(orm.Model):
     _description = 'Zip Label'
     _rec_name = 'code'
     _order = 'code'
-    
+
+    # -------------------------------------------------------------------------        
+    # QR Code path block:
+    # -------------------------------------------------------------------------        
     # TODO manage correctly:
-    _qrcode_path = '~/photo/db_name/quotation'
+    _qrcode_path = ['~', 'odoo', 'qrcode']
+    _qrcode_ext = 'png'
     
+    def get_qrcode_path(self):
+        ''' Generate default path for qrcode image
+        '''
+        res = ''
+        for folder in self_qrcode_path:
+            res = os.path.join(res, folder)
+        return res
+            
+    # -------------------------------------------------------------------------        
+    # Generation QR code
+    # -------------------------------------------------------------------------        
     def generate_qr_code(self, cr, uid, ids, context=None):
         ''' Generate QR Code for label
         '''
-        for label in self.browse(cr, uid, ids, context=context):
-            path = self._qrcode_path
-            
+        qr_mask = 'Zipperr\nCodice: [%s]\IT: %s\nEN: %s'
+        path = self.get_qrcode_path()
+        
+        for label in self.browse(cr, uid, ids, context=context):            
             item_id = label.id
-            fullname = os.path.join(path, '%s.png' % item_id)
+            fullname = os.path.join(
+                path, '%s.%s' % (item_id, self._qrcode_ext))
             
-            code = label.code
-            text_it = label.description_it
-            text_en = label.description_en
-            qr_mask = 'Zipperr\nCodice: %s\IT: %s\nEN: %s'
-            qr_text = qr_mask % (code, text_it, text_en)    
+            qr_text = qr_mask % (
+                label.code, 
+                label.description_it, 
+                label.description_en)    
             img = qrcode.make(qr_text)
             img.save(fullname)
         return True
     
-    def get_quotation_image(self, cr, uid, item, context=None):
-        ''' Get single image for the file
-            (default path is ~/photo/db_name/quotation
-        '''        
-        img = ''         
-        extension = "jpg"
-        path = os.path.expanduser(self._qrcode_path)
-
-        product_browse=self.browse(cr, uid, item, context=context)
-        # Image compoesed with code format (code.jpg)
-        if product_browse.default_code:
-            try:
-                (filename, header) = urllib.urlretrieve("%s/%s.%s"%(image_path, product_browse.default_code.replace(" ", "_"), extension)) # code image
-                f = open(filename , 'rb')
-                img = base64.encodestring(f.read())
-                f.close()
-            except:
-                img = ''
-            
-            if not img: # empty image:
-                try:
-                    (filename, header) = urllib.urlretrieve(empty_image) # empty setted up on folder
-                    f = open(filename , 'rb')
-                    img = base64.encodestring(f.read())
-                    f.close()
-                except:
-                    img = ''
-        return img
-
-    # Fields function:
+    # -------------------------------------------------------------------------        
+    # Fields function
+    # -------------------------------------------------------------------------        
     def _get_quotation_image(self, cr, uid, ids, field_name, arg, context=None):
         ''' Field function, for every ids test if there's image and return
             base64 format according to code value (images are jpg)
         '''
         res = {}
-        for item in ids:
-            res[item] = self.get_quotation_image(cr, uid, item, context=context)
-        return res    
-            _columns = {
+        
+        # Parameter QR Code:
+        path = self.get_qrcode_path()
+        qr_ext = self._qrcode_ext
+        
+        for product in self.browse(cr, uid, item, context=context):
+            fullname = os.path.join(
+                path, '%s.%s' % (product.id, qr_ext))
+            try:
+                (filename, header) = urllib.urlretrieve(fullname) 
+                f = open(filename , 'rb')
+                img = base64.encodestring(f.read())
+                f.close()
+            except:
+                img = ''
+            res[product.id] = img
+        return res
+        
+    _columns = {
         'code': fields.char(
             'Code', size=64, required=True),
         'description_it': fields.text('Description IT', required=True)
         'description_en': fields.text('Description EN', required=True)
-        # qrcode function binary
+
         'qrcode': fields.function(
-            _get_qrcode_image, type="binary", method=True),
+            _get_qrcode_image, type='binary', method=True),
         }
         
     _defaults = {
