@@ -43,15 +43,27 @@ class Parser(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):        
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
-            'get_object': self.get_object,
+            'get_objects': self.get_objects,
             })
     
-    def get_object(self, data=None):
+    def get_objects(self, objects, data=None, context=None):
         ''' Read passed label and generate 5 x block
         '''
-        
-        return []
-    
-
+        res = []
+        i = 0
+        partial = False
+        for label in objects:
+            if not i:
+                item = [False, False, False, False, False]
+                partial = True
+            item[i] = label
+            i += 1
+            if i == 4:
+                res.append(item)
+                i = 0           
+                partial = False 
+        if partial:
+            res.append(item)
+        return res
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
