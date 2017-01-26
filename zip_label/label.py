@@ -62,6 +62,44 @@ class ZipLabel(orm.Model):
         for folder in self_qrcode_path:
             res = os.path.join(res, folder)
         return res
+
+    # -------------------------------------------------------------------------        
+    # Override for generation QR Code:
+    # -------------------------------------------------------------------------        
+    def create(self, cr, uid, vals, context=None):
+        """ Create a new record for a model ClassName
+            @param cr: cursor to database
+            @param uid: id of current user
+            @param vals: provides a data for new record
+            @param context: context arguments, like lang, time zone
+            
+            @return: returns a id of new record
+        """
+    
+        res_id = super(ZipLabel, self).create(
+            cr, uid, vals, context=context)
+        # Generate QR Code    
+        self.generate_qr_code(cr, uid, [ids], context=context)
+        return res_id
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        """ Update redord(s) comes in {ids}, with new value comes as {vals}
+            return True on success, False otherwise
+            @param cr: cursor to database
+            @param uid: id of current user
+            @param ids: list of record ids to be update
+            @param vals: dict of new values to be set
+            @param context: context arguments, like lang, time zone
+            
+            @return: True on success, False otherwise
+        """    
+        res = super(ZipLabel, self).write(
+            cr, uid, ids, vals, context=context)
+
+        # Generate QR Code    
+        self.generate_qr_code(cr, uid, [ids], context=context)
+        return res
+    
             
     # -------------------------------------------------------------------------        
     # Generation QR code
