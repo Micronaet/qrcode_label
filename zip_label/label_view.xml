@@ -1,6 +1,77 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--sale.order-->
+        <record model="ir.ui.view" id="view_sale_order_zip_form">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <form string="Ordine di vendita">
+	                <sheet>
+		                <h1>
+			                <label string="Preventivo" attrs="{'invisible': [('state','not in',('draft','sent'))]}" modifiers="{'invisible': [['state', 'not in', ['draft', 'sent']]]}"/>
+			                <label string="Ordine di vendita" attrs="{'invisible': [('state','in',('draft','sent'))]}" modifiers="{'invisible': [['state', 'in', ['draft', 'sent']]]}"/>
+			                <field name="name" class="oe_inline" readonly="1" modifiers="{'readonly': true, 'required': true}"/>
+		                </h1>
+		                <group>
+			                <group>
+				                <field name="partner_id" on_change="onchange_partner_id(partner_id, context)" domain="[('customer','=',True),('is_company','=',True),('user_id','=',uid)]" context="{'search_default_customer':1, 'show_address': 1}" options="{'always_reload': True}" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+				                <field name="partner_invoice_id" context="{'default_type':'invoice'}" invisible="1" modifiers="{'invisible': true, 'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+				                <field name="partner_shipping_id" on_change="onchange_delivery_id(company_id, partner_id, partner_shipping_id, fiscal_position)" context="{'default_type':'delivery'}" invisible="1" modifiers="{'invisible': true, 'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+			                </group>
+			                <group>
+				                <field name="date_order" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+				                <field name="client_order_ref" modifiers="{}"/>
+				                <field name="warehouse_id" on_change="onchange_warehouse_id(warehouse_id)" options="{'no_create': True}" modifiers="{'required': true}" invisible="1"/>
+				                <field domain="[('type','=','sale')]" name="pricelist_id" on_change="onchange_pricelist_id(pricelist_id,order_line)" invisible="1" modifiers="{'invisible': true, 'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}" />
+				                <field name="currency_id" invisible="1" modifiers="{'invisible': true, 'readonly': true, 'required': true}"/>
+			                </group>
+		                </group>
+		                <notebook>
+			                <page string="Righe Ordine">
+				                <field name="order_line" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]]}">
+				                </field>
+				                <field name="note" class="oe_inline" placeholder="Termini e condizioni..." modifiers="{}"/>
+			                </page>
+		                </notebook>
+	                </sheet>
+	                <div class="oe_chatter">
+		                <field name="message_follower_ids" widget="mail_followers" modifiers="{}"/>
+		                <field name="message_ids" widget="mail_thread" modifiers="{}" options="{'display_log_button': true}"/>
+	                </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_sale_order_zip_tree">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="priority" eval="40" />
+            <field name="arch" type="xml">
+                <tree string="Ordini di Vendita" fonts="bold:message_unread==True" colors="grey:state=='cancel';blue:state in ('waiting_date','manual');red:state in ('invoice_except','shipping_except')">
+	                <field name="message_unread" invisible="1" modifiers="{'readonly': true, 'tree_invisible': true}"/>
+	                <field name="name" string="Numero Ordine" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+	                <field name="date_order" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+	                <field name="partner_id" modifiers="{'readonly': [['state', 'not in', ['draft', 'sent']]], 'required': true}"/>
+	                <field name="user_id" modifiers="{}"/>
+	                <field name="amount_total" sum="Totale Imposte Incluse" modifiers="{'readonly': true}" invisible="1"/>
+	                <field name="state" modifiers="{'readonly': true}"/>
+                </tree>
+            </field>
+        </record>        
+        <record model="ir.actions.act_window" id="action_sale_order_zip">
+            <field name="name">Ordini</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_sale_order_zip_tree"/>
+            <field name="context">{'form_view_ref': 'zip_label.view_sale_order_zip_form'}</field>
+            <field name="domain">[]</field>
+        </record>
+
+        
+        <!--zip.label-->
         <record model="ir.ui.view" id="view_zip_label_form">
             <field name="name">zip.label.form</field>
             <field name="model">zip.label</field>
@@ -57,7 +128,15 @@
                     parent="menu_label_label" 
                     id="menu_action_label_list" 
                     action="action_zip_label"
+                    sequence="10"
                     />
+                <menuitem 
+                    parent="menu_label_label" 
+                    id="menu_action_order_tree" 
+                    action="action_sale_order_zip"
+                    sequence="20"
+                    />
+                    
         
     </data>
 </openerp>
