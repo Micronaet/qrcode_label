@@ -22,6 +22,8 @@ import sys
 import logging
 import openerp
 import qrcode
+import urllib
+import base64
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -59,12 +61,13 @@ class ZipLabel(orm.Model):
         ''' Generate default path for qrcode image
         '''
         res = ''
-        for folder in self_qrcode_path:
+        for folder in self._qrcode_path:
             res = os.path.join(res, folder)
         res = os.path.expanduser(res)
             
         try:    
             os.system('mkdir -p %s' % res)
+            _logger.info('QRCode path folder: %s' % res) 
         except:
             _logger.error('Error generating path: %s' % res) 
         return res
@@ -85,7 +88,7 @@ class ZipLabel(orm.Model):
         res_id = super(ZipLabel, self).create(
             cr, uid, vals, context=context)
         # Generate QR Code    
-        self.generate_qr_code(cr, uid, [ids], context=context)
+        self.generate_qr_code(cr, uid, [res_id], context=context)
         return res_id
     
     def write(self, cr, uid, ids, vals, context=None):
@@ -103,7 +106,7 @@ class ZipLabel(orm.Model):
             cr, uid, ids, vals, context=context)
 
         # Generate QR Code    
-        self.generate_qr_code(cr, uid, [ids], context=context)
+        self.generate_qr_code(cr, uid, ids, context=context)
         return res
     
     
@@ -114,6 +117,8 @@ class ZipLabel(orm.Model):
     def generate_qr_code(self, cr, uid, ids, context=None):
         ''' Generate QR Code for label
         '''
+        if type(ids) not in (list, tuple):
+            ids = [ids]
         qr_mask = 'Zipperr\nCodice: [%s]\IT: %s\nEN: %s'
         path = self.get_qrcode_path()
         
@@ -133,7 +138,7 @@ class ZipLabel(orm.Model):
     # -------------------------------------------------------------------------        
     # Fields function
     # -------------------------------------------------------------------------        
-    def _get_quotation_image(self, cr, uid, ids, field_name, arg, context=None):
+    def _get_qrcode_image(self, cr, uid, ids, field_name, arg, context=None):
         ''' Field function, for every ids test if there's image and return
             base64 format according to code value (images are jpg)
         '''
@@ -143,11 +148,12 @@ class ZipLabel(orm.Model):
         path = self.get_qrcode_path()
         qr_ext = self._qrcode_ext
         
-        for product in self.browse(cr, uid, item, context=context):
+        for product in self.browse(cr, uid, ids, context=context):
             fullname = os.path.join(
                 path, '%s.%s' % (product.id, qr_ext))
             try:
                 (filename, header) = urllib.urlretrieve(fullname) 
+                _logger.info('Read QR Code image: %s' % filename) 
                 f = open(filename , 'rb')
                 img = base64.encodestring(f.read())
                 f.close()
@@ -159,8 +165,8 @@ class ZipLabel(orm.Model):
     _columns = {
         'code': fields.char(
             'Code', size=64, required=True),
-        'description_it': fields.text('Description IT', required=True)
-        'description_en': fields.text('Description EN', required=True)
+        'description_it': fields.text('Description IT', required=True),
+        'description_en': fields.text('Description EN', required=True),
 
         'qrcode': fields.function(
             _get_qrcode_image, type='binary', method=True),

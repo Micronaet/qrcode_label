@@ -1,7 +1,66 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-
+        <record model="ir.ui.view" id="view_zip_label_form">
+            <field name="name">zip.label.form</field>
+            <field name="model">zip.label</field>
+            <field name="arch" type="xml">
+                <form string="String" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <group col="2" colspan="2">
+                                <field name="code" />
+                                <separator string="Description (IT)" colspan="2"/>
+                                <field name="description_it" nolabel="1" colspan="2"/>
+                                <separator string="Description (EN)" colspan="2"/>
+                                <field name="description_en" nolabel="1" colspan="2"/>                            
+                            </group>
+                            <group col="2" colspan="2">
+                                <field name="qrcode" widget="image" readonly="1" nolabel="1" colspan="2"/>
+                            </group>
+                            <newline/>
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_zip_label_tree">
+            <field name="name">zip.label.tree</field>
+            <field name="model">zip.label</field>
+            <field name="arch" type="xml">
+                <tree string="String" version="7.0">        
+                    <field name="code" />
+                    <field name="description_it" />
+                    <field name="description_en" />                            
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_zip_label">
+            <field name="name">Label</field>
+            <field name="res_model">zip.label</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_zip_label_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem 
+            id="menu_label_root" 
+            name="Label"
+            />
+            <menuitem 
+                parent="menu_label_root" 
+                id="menu_label_label" 
+                name="Label"                
+                />
+                <menuitem 
+                    parent="menu_label_label" 
+                    id="menu_action_label_list" 
+                    action="action_zip_label"
+                    />
+                
+            
+        
     </data>
 </openerp>
 
