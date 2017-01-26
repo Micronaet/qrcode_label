@@ -119,7 +119,7 @@ class ZipLabel(orm.Model):
         '''
         if type(ids) not in (list, tuple):
             ids = [ids]
-        qr_mask = 'Zipperr\nCodice: [%s]\IT: %s\nEN: %s'
+        qr_mask = 'Zipperr\nCodice: [%s]\nIT: %s\nEN: %s'
         path = self.get_qrcode_path()
         
         for label in self.browse(cr, uid, ids, context=context):            
@@ -204,10 +204,24 @@ class SaleOrder(orm.Model):
     
     _inherit = 'sale.order'
     
-    def onchange_qrcode_box(self, cr, uid, ids, context=None):
+    def onchange_qrcode_box(self, cr, uid, ids, label_box, context=None):
         ''' QRcode box
         '''
-        res = {}
+        res = {'value': {}}# {'label_box': False}}
+        
+        if label_box:
+            part = label_box.split('[').split(']')
+        i = 0   
+        code = [] 
+        for item in part:
+            i += 1
+            if i mod 2 == 0:
+                code.append(item)
+                
+                        
+        #res['value']['label_id'] = 3 # TODO 
+        #res['value']['name'] = 'Etichetta 1' # TODO 
+        res['value']['label_box'] = '%s' % (code, )
         
         return res
         
