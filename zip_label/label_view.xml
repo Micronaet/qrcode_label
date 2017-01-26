@@ -35,9 +35,10 @@
 			                <page string="Righe Ordine">
 				                <field name="order_line">
 				                    <tree string="Ordine" editable="bottom">
-        				                <field name="label_box" class="oe_inline" placeholder="QRCode box reader..." modifiers="{}"/>
+        				                <field name="label_box" class="oe_inline" placeholder="QRCode box reader..." on_change="onchange_qrcode_box(label_box)"/>
 				                        <field name="product_uom_qty" />
 				                        <field name="product_id" invisible="1"/>
+				                        <field name="name" invisible="1"/>
 				                        <field name="label_id" />
 				                        <field name="state" invisible="1" />
 				                    </tree>

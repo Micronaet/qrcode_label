@@ -182,10 +182,22 @@ class SaleOrderLine(orm.Model):
     
     _inherit = 'sale.order.line'
     
+    def onchange_qrcode_box(self, cr, uid, ids, label_box, context=None):
+        ''' QRcode box
+        '''
+        res = {'value': {'label_box': False}}
+        
+        res['value']['label_id'] = 3 # TODO 
+        res['value']['name'] = 'Etichetta 1' # TODO 
+        
+        return res
+
     _columns = {
         'label_id': fields.many2one('zip.label', 'Label'),
+        'label_box': fields.text('QRCode box'),
         }
 
+# TODO remove:
 class SaleOrder(orm.Model):
     """ Model name: SaleOrderLine
     """
