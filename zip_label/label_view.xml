@@ -58,8 +58,6 @@
                     id="menu_action_label_list" 
                     action="action_zip_label"
                     />
-                
-            
         
     </data>
 </openerp>
