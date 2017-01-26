@@ -175,5 +175,33 @@ class ZipLabel(orm.Model):
     _defaults = {
         # TODO code automatic
         }    
+        
+class SaleOrderLine(orm.Model):
+    """ Model name: SaleOrderLine
+    """
+    
+    _inherit = 'sale.order.line'
+    
+    _columns = {
+        'label_id': fields.many2one('zip.label', 'Label'),
+        }
+
+class SaleOrder(orm.Model):
+    """ Model name: SaleOrderLine
+    """
+    
+    _inherit = 'sale.order'
+    
+    def onchange_qrcode_box(self, cr, uid, ids, context=None):
+        ''' QRcode box
+        '''
+        res = {}
+        
+        return res
+        
+    _columns = {
+        'label_box': fields.text('QRCode box'),
+        }
+    
     
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
