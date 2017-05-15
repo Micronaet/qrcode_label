@@ -60,8 +60,8 @@ class ProductImportXLSWizard(orm.TransientModel):
         # Import procedure:
         label_pool = self.pool.get('zip.label')
         filename = '/home/thebrush/etl/qrcode/etichette.xls'
-        import pdb;pdb.set_trace()
-        _logger.info ('Start import from path: %s' % filename)
+
+        _logger.info('Start import from path: %s' % filename)
         try:
             # from xlrd.sheet import ctype_text
             wb = xlrd.open_workbook(filename)
@@ -71,11 +71,11 @@ class ProductImportXLSWizard(orm.TransientModel):
                 _('Import file: %s' % filename),
                 _('Error opening excel file'),
                 )
-        
+        insert_code = []
         for line in range(1, ws.nrows):
-            code = ws.cell(line, 0)
-            description_it = ws.cell(line, 1)
-            description_en = ws.cell(line, 2)
+            code = ws.cell(line, 0).value
+            description_it = ws.cell(line, 1).value
+            description_en = ws.cell(line, 2).value
             if not code:
                 _logger.warning('Code not found, %s') % line
 
@@ -89,8 +89,18 @@ class ProductImportXLSWizard(orm.TransientModel):
                 }
             if label_ids:
                 label_pool.write(cr, uid, label_ids, data, context=context)
-            else
+                _logger.info('Update code: %s' % code)
+            else:
                 label_pool.create(cr, uid, data, context=context)
+                _logger.info('Creata code: %s' % code)
+            
+            insert_code.append(code)
+            
+        remove_ids = label_pool.search(cr, uid, [
+            ('code', 'not in', insert_code),
+            ], context=context)        
+        label_pool.unlink(cr, uid, remove_ids, context=context)
+        _logger.info('Unlink element: %s' % len(remove_ids))
         return True
 
     _columns = {
