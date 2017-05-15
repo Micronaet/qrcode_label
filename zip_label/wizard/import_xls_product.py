@@ -76,7 +76,7 @@ class ProductImportXLSWizard(orm.TransientModel):
             description_it = ws.cell(line, 1)
             description_en = ws.cell(line, 2)
             if not code:
-                _logger.warning('Code not found, %s %line')
+                _logger.warning('Code not found, %s') % line
         return {
             'type': 'ir.actions.act_window_close'
             }
