@@ -23,6 +23,7 @@
 
 import os
 import sys
+import xlrd
 import logging
 import openerp
 import openerp.addons.decimal_precision as dp
@@ -54,9 +55,27 @@ class ProductImportXLSWizard(orm.TransientModel):
         '''
         if context is None: 
             context = {}                
-        #wizard_browse = self.browse(cr, uid, ids, context=context)[0]
+        wizard_browse = self.browse(cr, uid, ids, context=context)[0]
         
         # Import procedure:
+        filename = '/home/thebrush/etl/qrcode/etichette.xls'
+        _logger.info ('Start import from path: %s' % filename)
+        try:
+            # from xlrd.sheet import ctype_text
+            wb = xlrd.open_workbook(filename)
+            ws = wb.sheet_by_index(0)
+        except:
+            raise osv.except_osv(
+                _('Import file: %s' % filename),
+                _('Error opening excel file'),
+                )
+        
+        for line in range(1, ws.nrows)
+            code = ws.cell(line, 0)
+            description_id = ws.cell(line, 1)
+            description_id = ws.cell(line, 2)
+            if not code:
+                _logger.warning('Code not found, %s')
         return {
             'type': 'ir.actions.act_window_close'
             }
