@@ -96,11 +96,12 @@ class ProductImportXLSWizard(orm.TransientModel):
             
             insert_code.append(code)
             
-        remove_ids = label_pool.search(cr, uid, [
-            ('code', 'not in', insert_code),
-            ], context=context)        
-        label_pool.unlink(cr, uid, remove_ids, context=context)
-        _logger.info('Unlink element: %s' % len(remove_ids))
+        if wizard_browse.mode == 'syncro':    
+            remove_ids = label_pool.search(cr, uid, [
+                ('code', 'not in', insert_code),
+                ], context=context)        
+            label_pool.unlink(cr, uid, remove_ids, context=context)
+            _logger.info('Unlink element: %s' % len(remove_ids))
         return True
 
     _columns = {
