@@ -59,6 +59,7 @@ class ProductImportXLSWizard(orm.TransientModel):
         
         # Import procedure:
         filename = '/home/thebrush/etl/qrcode/etichette.xls'
+        import pdb;pdb.set_trace()
         _logger.info ('Start import from path: %s' % filename)
         try:
             # from xlrd.sheet import ctype_text
