@@ -36,6 +36,7 @@
     'demo': [],
     'data': [
         'report/label_report.xml',
+        'wizard/print_report_wizard_view.xml',
         ],
     'active': False,
     'installable': True,

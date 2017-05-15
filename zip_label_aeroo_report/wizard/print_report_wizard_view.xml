@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<openerp>
+  <data>
+       <!-- zip.label.print.report.wizard -->
+       <record id="zip_label_print_report_wizard_view" model="ir.ui.view">
+            <field name="name">Multiorder on sale wizard</field>
+            <field name="model">zip.label.print.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Analytic report" version="7.0">
+                    <head>
+                        <button string="Cancel" special="cancel" colspan="2" />                   
+                        <button name="print_report" type="object" string="Print" icon="gtk-print" colspan="2" class="oe_highlight"/>
+                    </head>
+                    <sheet>
+                        <group colspan="4" col="4">
+                            <field name="start_code" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+      </record>
+      <record id="action_zip_label_print_report_wizard" model="ir.actions.act_window">
+        <field name="name">Label print wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">zip.label.print.report.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+      </record>
+   <menuitem name="Print label wizard"
+          parent="sale.menu_sale_order" 
+          id="menu_zip_label_print_report_wizard" 
+          action="action_zip_label_print_report_wizard" 
+          sequence="20" 
+          />
+  </data>
+</openerp>
+
