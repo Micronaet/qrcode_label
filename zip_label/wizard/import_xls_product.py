@@ -59,6 +59,7 @@ class ProductImportXLSWizard(orm.TransientModel):
         
         # Import procedure:
         filename = '/home/thebrush/etl/qrcode/etichette.xls'
+        import pdb;pdb.set_trace()
         _logger.info ('Start import from path: %s' % filename)
         try:
             # from xlrd.sheet import ctype_text
@@ -72,10 +73,10 @@ class ProductImportXLSWizard(orm.TransientModel):
         
         for line in range(1, ws.nrows)
             code = ws.cell(line, 0)
-            description_id = ws.cell(line, 1)
-            description_id = ws.cell(line, 2)
+            description_it = ws.cell(line, 1)
+            description_en = ws.cell(line, 2)
             if not code:
-                _logger.warning('Code not found, %s')
+                _logger.warning('Code not found, %s %line')
         return {
             'type': 'ir.actions.act_window_close'
             }
