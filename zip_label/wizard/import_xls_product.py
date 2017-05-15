@@ -71,7 +71,7 @@ class ProductImportXLSWizard(orm.TransientModel):
                 _('Error opening excel file'),
                 )
         
-        for line in range(1, ws.nrows)
+        for line in range(1, ws.nrows):
             code = ws.cell(line, 0)
             description_it = ws.cell(line, 1)
             description_en = ws.cell(line, 2)
