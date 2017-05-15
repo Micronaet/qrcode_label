@@ -139,12 +139,12 @@
                     action="action_zip_label"
                     sequence="10"
                     />
-                <menuitem 
+                <!--<menuitem 
                     parent="menu_label_label" 
                     id="menu_action_order_tree" 
                     action="action_sale_order_zip"
                     sequence="20"
-                    />
+                    />-->
                     
         
     </data>

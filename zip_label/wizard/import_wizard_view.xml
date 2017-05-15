@@ -27,7 +27,7 @@
           <field name="view_id" ref="product_import_xls_wizard_view"/>
       </record>      
       <menuitem 
-            parent="menu_label_label" 
+            parent="menu_action_label_list" 
             id="menu_product_import_xls_wizard" 
             action="action_product_import_xls_wizard"
             sequence="40"
