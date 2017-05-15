@@ -41,7 +41,6 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
-
 class ProductImportXLSWizard(orm.TransientModel):
     ''' Wizard for
     '''
@@ -114,7 +113,7 @@ class ProductImportXLSWizard(orm.TransientModel):
     _defaults = {
         'mode': lambda *x: 'syncro',
         }    
-        
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
 

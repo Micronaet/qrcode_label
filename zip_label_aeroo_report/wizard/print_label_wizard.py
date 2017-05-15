@@ -70,4 +70,26 @@ class ZipLabelPrintReportWizard(orm.TransientModel):
     _columns = {
         'start_code': fields.char('Start code', size=64),
         }
+
+class ZipLabelPrintReportLineWizard(orm.TransientModel):
+    ''' Wizard for line
+    '''
+    _name = 'zip.label.print.report.line.wizard'
+    
+    _columns = {
+        'name': fields.char('Start code', size=64),
+        'wizard_id': fields.many2one(
+            'zip.label.print.report.wizard', 'Wizard'),        
+        }
+        
+class ZipLabelPrintReportWizard(orm.TransientModel):
+    ''' Add relations
+    '''
+    _inherit = 'zip.label.print.report.wizard'
+    
+    _columns = {
+        'start_code_ids': fields.one2many(
+            'zip.label.print.report.line.wizard', 'wizard_id', 'Start code'),
+        }
+        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
