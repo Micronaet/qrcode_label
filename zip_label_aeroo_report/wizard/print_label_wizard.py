@@ -51,16 +51,37 @@ class ZipLabelPrintReportWizard(orm.TransientModel):
     def print_report(self, cr, uid, ids, context=None):
         ''' Print report wizard
         ''' 
-        wiz_proxy = self.browse(cr, uid, ids)[0]
-            
-        datas = {}
+        # Initial setup:
+        wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
+        label_pool = self.pool.get('zip.label')            
         report_name = 'zip_label_report'
-        datas['wizard'] = True # started from wizard
         
-        start_code = wiz_proxy.start_code
+        # Create domain:
+        total = len(wiz_proxy.start_code_ids)
+        if total > 1:
+            domain = ['|' for item in range(
+                0, len(wiz_proxy.start_code_ids) - 1)]
+        else:    
+            domain = []
+            
+        for start in wiz_proxy.start_code_ids:
+            domain.append(('code', '=ilike', '%s%%' % start.name))
+        _logger.info('Domain search for report: %s' % domain)
         
-        #datas['only_remain'] = wiz_proxy.only_remain
+        # Search lable:    
+        object_ids = label_pool.search(cr, uid, domain, context=context)        
+        if not object_ids:
+            raise osv.except_osv(
+                _('Print report'), 
+                _('No label selected change filter'),
+                )
 
+        datas = {
+            'from_wizard': True,            
+            'object_ids': object_ids,
+            }
+        
+        # Open report:
         return {
             'type': 'ir.actions.report.xml',
             'report_name': report_name,

@@ -50,8 +50,21 @@ class Parser(report_sxw.rml_parse):
         ''' Read passed label and generate 5 x block
         '''
         res = []
-        i = 0
+        cr = self.cr
+        uid = self.uid
+        if data is None:
+            data = {}
+        if context is None:
+            context = {}
+        label_pool = self.pool.get('zip.label')
+        
+        if data.get('from_wizard', False):
+            #objects = data.get('objects', False)
+            object_ids = data.get('object_ids', [])
+            objects = label_pool.browse(cr, uid, object_ids, context=context)
+            
         partial = False
+        i = 0
         for label in objects:
             if not i:
                 item = [False, False, False, False, False]
