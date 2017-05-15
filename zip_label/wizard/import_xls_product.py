@@ -79,10 +79,10 @@ class ProductImportXLSWizard(orm.TransientModel):
             if not code:
                 _logger.warning('Code not found, %s') % line
             label_ids = label_pool.search(cr,uid, [('code', '=', code)], 
-                        context=context)
+                        context=context),
             data = {'code': code,
                     'description_it': description_it,
-                    'description_en': description_en,}   
+                    'description_en': description_en,},   
             if label_ids
                 label_pool.write(cr, uid, label_ids, {'data'}, context=context),
             else
