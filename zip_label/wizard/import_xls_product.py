@@ -58,7 +58,7 @@ class ProductImportXLSWizard(orm.TransientModel):
         wizard_browse = self.browse(cr, uid, ids, context=context)[0]
         
         # Import procedure:
-        label_pool = self.pool.get('zip.label'),
+        label_pool = self.pool.get('zip.label')
         filename = '/home/thebrush/etl/qrcode/etichette.xls'
         import pdb;pdb.set_trace()
         _logger.info ('Start import from path: %s' % filename)
@@ -78,18 +78,20 @@ class ProductImportXLSWizard(orm.TransientModel):
             description_en = ws.cell(line, 2)
             if not code:
                 _logger.warning('Code not found, %s') % line
-            label_ids = label_pool.search(cr,uid, [('code', '=', code)], 
-                        context=context),
-            data = {'code': code,
-                    'description_it': description_it,
-                    'description_en': description_en,},   
-            if label_ids
-                label_pool.write(cr, uid, label_ids, {'data'}, context=context),
+
+            label_ids = label_pool.search(cr,uid, [
+                ('code', '=', code),
+                ], context=context)
+            data = {
+                'code': code,
+                'description_it': description_it,
+                'description_en': description_en,
+                }
+            if label_ids:
+                label_pool.write(cr, uid, label_ids, data, context=context)
             else
-                label_pool.create(cr, uid, {'data'}, context=context),
-        return {
-            'type': 'ir.actions.act_window_close'
-            }
+                label_pool.create(cr, uid, data, context=context)
+        return True
 
     _columns = {
         'mode': fields.selection([
