@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       <!-- product.import.xls.wizard -->
+       <record id="product_import_xls_wizard_view" model="ir.ui.view">
+            <field name="name">Import product XLS</field>
+            <field name="model">product.import.xls.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                       <button name="action_import" string="Import" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                   </header>                   
+                   <group colspan="4" col="4">
+                       <field name="mode" />
+                   </group>
+                </form>
+            </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_product_import_xls_wizard">
+          <field name="name">Import product XLS</field>
+          <field name="res_model">product.import.xls.wizard</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="view_id" ref="product_import_xls_wizard_view"/>
+      </record>      
+      <menuitem 
+            parent="menu_label_label" 
+            id="menu_product_import_xls_wizard" 
+            action="action_product_import_xls_wizard"
+            sequence="40"
+            />      
+    </data>
+</openerp>
