@@ -58,7 +58,8 @@ class ProductImportXLSWizard(orm.TransientModel):
         
         # Import procedure:
         label_pool = self.pool.get('zip.label')
-        filename = '/home/thebrush/etl/qrcode/etichette.xls'
+        filename = '~/etl/smb/prodotti/etichette.xls'
+        filename = os.path.expanduser(filename)
 
         _logger.info('Start import from path: %s' % filename)
         try:
